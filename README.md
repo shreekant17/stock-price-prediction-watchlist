@@ -9,7 +9,6 @@ This project is a full-stack application that allows users to create watchlists 
 - **Stock Search**: Search for any **NSE Nifty 500** stock by name or symbol.
 - **LSTM-Based Predictions**: Get AI-driven stock price predictions using an LSTM model.
 
-
 ## Tech Stack
 ### Frontend (Vite + React)
 - **Vite**: Fast build tool for React.
@@ -37,7 +36,7 @@ Ensure you have the following installed:
 ### Steps to Run the Project
 #### 1. Clone the Repository
 ```sh
-git clone https://github.com/your-repo-url.git
+git clone https://github.com/stock-price-prediction-watchlist.git
 cd your-project-directory
 ```
 
