@@ -16,7 +16,7 @@ import axios from "axios"
 
 const WatchlistTable = () => {
 
-  const fastserver = `http://localhost:8000`
+  const fastserver = `https://shreekantkalwar-stock-prediction-model.hf.space`
   const server = `https://stock-prediction-two-roan.vercel.app/api`
   const { selectedWatchlist, removeFromWatchlist, selectStock, setSelectedWatchlist } = useStock();
 

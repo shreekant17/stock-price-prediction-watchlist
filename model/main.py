@@ -172,6 +172,26 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
         "future_predictions": future_predictions
     }
 
+
+
+
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+
+
+
+@app.get("/", response_class=HTMLResponse)
+async def hello():
+    try:
+        return """
+        <html>
+            <head><title>Server Status</title></head>
+            <body>Server Running OK</body>
+        </html>
+        """
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/train")
 async def train_model(request: TrainRequest):
     try:

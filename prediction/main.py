@@ -172,6 +172,10 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
         "future_predictions": future_predictions
     }
 
+
+
+    
+
 @app.post("/train")
 async def train_model(request: TrainRequest):
     try:
