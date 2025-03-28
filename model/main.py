@@ -185,41 +185,6 @@ async def train_model(request: TrainRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/search")
-async def find_stock(query: str = Query(..., min_length=1)):
-    try:
-        # Fetch NIFTY 50 & BSE Sensex stock lists (example)
-        nse_indices = yf.Ticker("^NSEI").history(period="1d")
-        bse_indices = yf.Ticker("^BSESN").history(period="1d")
-
-        if nse_indices.empty and bse_indices.empty:
-            return {"error": "Could not fetch stock data"}
-
-        # Combine stock symbols (Modify to fetch full NSE/BSE lists)
-        stock_symbols = ["RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "500325.BO", "532540.BO"]
-
-        # Filter stock symbols based on regex match with query
-        pattern = re.compile(query, re.IGNORECASE)
-        matched_symbols = [symbol for symbol in stock_symbols if pattern.search(symbol)]
-
-        # Fetch live stock details from Yahoo Finance
-        stock_data = []
-        for symbol in matched_symbols:
-            stock = yf.Ticker(symbol)
-            info = stock.info
-
-            stock_data.append({
-                "symbol": symbol,
-                "name": info.get("longName", "N/A"),
-                "logo": info.get("logo_url", "https://logo.clearbit.com/yahoo.com"),  # Default logo
-                "sector": info.get("sector", "N/A"),
-                "exchange": info.get("exchange", "N/A"),
-            })
-
-        return {"results": stock_data}
-
-    except Exception as e:
-        return {"error": str(e)}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
