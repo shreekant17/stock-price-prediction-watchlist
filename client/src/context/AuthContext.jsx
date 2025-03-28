@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const server = "http://localhost:5000/api"
+  const server = "https://stock-prediction-two-roan.vercel.app/api"
 
   useEffect(() => {
     // Check for token and user in localStorage with proper null handling

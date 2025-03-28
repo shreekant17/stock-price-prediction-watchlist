@@ -38,7 +38,7 @@ const WatchlistSelector = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const server = `http://localhost:5000/api`
+  const server = `https://stock-prediction-two-roan.vercel.app/api`
 
   const { user } = useAuth();
 
