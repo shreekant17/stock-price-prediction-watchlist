@@ -18,7 +18,7 @@ const WatchlistTable = () => {
 
   const fastserver = `https://shreekantkalwar-stock-prediction-model.hf.space`
   const server = `https://stock-prediction-two-roan.vercel.app/api`
-  const { selectedWatchlist, removeFromWatchlist, selectStock, setSelectedWatchlist } = useStock();
+  const { selectedWatchlist, removeFromWatchlist, selectStock, setSelectedStock, setSelectedWatchlist } = useStock();
 
   const [predictedPrice, setPredictedPrice] = useState("----")
 
@@ -154,7 +154,7 @@ const WatchlistTable = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => selectStock(stock.symbol)}
+                    onClick={() => setSelectedStock(stock)}
                   >
                     <Eye className="h-4 w-4" />
                   </Button>

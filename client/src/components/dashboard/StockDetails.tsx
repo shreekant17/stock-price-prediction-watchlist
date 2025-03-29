@@ -56,7 +56,7 @@ const StockDetails: React.FC = () => {
             <div className={`flex items-center ${changeColor}`}>
               <ArrowIcon className="mr-1 h-5 w-5" />
               <div className="text-lg font-medium">
-                {isPositive ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
+                {isPositive ? '+' : ''}{selectedStock.pChange.toFixed(2)}%
               </div>
             </div>
           </div>
@@ -69,15 +69,15 @@ const StockDetails: React.FC = () => {
               </div>
               <p className="font-medium">{formatWithSuffix(selectedStock.marketCap * 1e9)}</p>
             </div>
-            
+
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm font-medium text-muted-foreground">P/E Ratio</p>
               </div>
-              <p className="font-medium">{selectedStock.peRatio.toFixed(2)}</p>
+              <p className="font-medium">{selectedStock.peRatio?.toFixed(2)}</p>
             </div>
-            
+
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -85,7 +85,7 @@ const StockDetails: React.FC = () => {
               </div>
               <p className="font-medium">{formatCurrency(selectedStock.high52Week)}</p>
             </div>
-            
+
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-4 w-4 text-muted-foreground rotate-180" />

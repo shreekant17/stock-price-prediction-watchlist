@@ -157,15 +157,28 @@ export const stock_data = async (req, res) => {
 };
 
 
+
 export const getHistoricalData = async (req, res) => {
     try {
-        const nse = new NseIndia()
+        const nse = new NseIndia();
         const { symbol, range } = req.body;
+
+        // Fetch historical data from NSE API
         const response = await nse.getEquityHistoricalData(symbol, range);
-        res.status(200).json({ message: "Historical data received", response });
+
+        // Extract CH_TIMESTAMP and CH_LAST_TRADED_PRICE
+        const extractedData = response.flatMap(entry =>
+            entry?.data?.map(({ CH_TIMESTAMP, CH_LAST_TRADED_PRICE }) => ({
+                date: CH_TIMESTAMP,
+                price: CH_LAST_TRADED_PRICE
+            })) || []
+        );
+
+        // Send the extracted data in response
+        res.status(200).json({ message: "Historical data received", data: extractedData });
+
     } catch (e) {
         console.error(e);
-        res.status(500).json({ message: "Error Occured", e });
+        res.status(500).json({ message: "Error Occurred", error: e.message });
     }
-}
-
+};

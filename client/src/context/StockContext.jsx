@@ -313,6 +313,7 @@ export const StockProvider = ({ children }) => {
       predictionHorizon,
       stockData,
       predictionData,
+      setSelectedStock,
       setSearchResults,
       setSelectedWatchlist,
       createWatchlist,
