@@ -48,6 +48,12 @@ const WatchlistTable = () => {
       //console.log(stock.symbol);
       //console.log(startDate.toISOString().split('T')[0])
       //console.log(new Date().toISOString().split('T')[0])
+       setSelectedWatchlist((prevWatchlist) => ({
+          ...prevWatchlist,
+          stocks: prevWatchlist.stocks.map((s) =>
+            s.stockId === stock.stockId ? { ...s, nextPrice: "Predicting..." } : s
+          ),
+        }));
 
       const response = await axios.post(`${fastserver}/train`, {
           stock_symbol: stock.symbol,
@@ -131,7 +137,13 @@ const WatchlistTable = () => {
               <TableCell className="font-medium">{stock.symbol}</TableCell>
               <TableCell>{stock.companyName}</TableCell>
               <TableCell className="text-right">{renderPriceChange(stock)}</TableCell>
-              <TableCell className="text-right">{stock.nextPrice?renderPredictionPrice(stock.lastPrice, stock.nextPrice):"---"}</TableCell>
+              <TableCell className="text-right">
+                  {stock.nextPrice === undefined 
+                  ? "---" 
+                  : typeof stock.nextPrice === "number" 
+                    ? renderPredictionPrice(stock.lastPrice, stock.nextPrice) 
+                                : stock.nextPrice}
+              </TableCell>
               <TableCell>
                 <div className="flex space-x-1">
                   <Button
