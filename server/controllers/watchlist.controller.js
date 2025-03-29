@@ -60,7 +60,7 @@ export const getlist = async (req, res) => {
         const watchlist = await Watchlist.findOne({ _id: watchlistId })
             .populate({
                 path: "stocks.stockId",
-                select: "symbol name price change pChange nextPrice"
+                select: "symbol name price change pChange nextPrice peRatio high52Week low52Week"
             });
 
         if (!watchlist) {
@@ -76,6 +76,9 @@ export const getlist = async (req, res) => {
                 symbol: stock.stockId.symbol,
                 name: stock.stockId.name,
                 price: stock.stockId.price,
+                peRatio: stock.stockId.peRatio,
+                high52Week: stock.stockId.high52Week,
+                low52Week: stock.stockId.low52Week,
                 change: stock.stockId.change,
                 pChange: stock.stockId.pChange,
                 nextPrice: stock.stockId.nextPrice,

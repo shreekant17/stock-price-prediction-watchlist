@@ -62,6 +62,9 @@ export const search = async (req, res) => {
             change: 1,
             pChange: 1,
             nextPrice: 1,
+            peRatio: 1,
+            high52Week: 1,
+            low52Week: 1,
             _id: 1
         });
 
@@ -111,6 +114,7 @@ export const stock_data = async (req, res) => {
         const symbols = await nse.getAllStockSymbols(); // Get all stock symbols from NSE
 
         // Fetch all stock details in parallel
+
         const stockDetails = await Promise.all(
             symbols.map(async (symbol) => {
                 try {
@@ -122,6 +126,9 @@ export const stock_data = async (req, res) => {
                         price: x.priceInfo.lastPrice,
                         change: x.priceInfo.change,
                         pChange: x.priceInfo.pChange,
+                        peRatio: x.metadata.pdSymbolPe,
+                        high52Week: x.priceInfo.weekHighLow.max,
+                        low52Week: x.priceInfo.weekHighLow.min
                     };
                 } catch (error) {
                     console.error(`Error fetching details for ${symbol}:`, error);
@@ -129,6 +136,8 @@ export const stock_data = async (req, res) => {
                 }
             })
         );
+
+
 
         // Filter out any failed fetches (null values)
         const stocks = stockDetails.filter(stock => stock !== null);
