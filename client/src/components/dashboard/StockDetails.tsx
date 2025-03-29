@@ -76,7 +76,7 @@ const StockDetails: React.FC = () => {
                 <p className="text-sm font-medium text-muted-foreground">P/E Ratio</p>
               </div>
               <p className="font-medium">
-                {typeof selectedStock.peRatio === "number" ? selectedStock.peRatio.toFixed(2) : "N/A"}
+                {typeof Number(selectedStock.peRatio) === "number" ? Number(selectedStock.peRatio).toFixed(2) : "N/A"}
               </p>
             </div>
 

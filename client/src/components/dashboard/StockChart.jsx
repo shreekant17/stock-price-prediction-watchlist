@@ -37,10 +37,7 @@ const StockChart = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!selectedStock) return;
-
-    const fetchData = async () => {
+   const fetchData = async () => {
       setLoading(true);
       try {
         const startDate = new Date();
@@ -101,6 +98,11 @@ const StockChart = () => {
       setLoading(false);
     };
 
+  useEffect(() => {
+    if (!selectedStock) return;
+
+   
+
     fetchData();
   }, [selectedStock]);
 
@@ -108,7 +110,7 @@ const StockChart = () => {
     <Card className="col-span-3 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{selectedStock?.symbol || 'Stock Chart'}</CardTitle>
-        <Button onClick={() => setData([])} disabled={loading}>
+        <Button onClick={() => { setData([]); fetchData() }} disabled={loading || !selectedStock} >
           {loading ? <RefreshCw className="animate-spin" /> : <RefreshCw />} Refresh
         </Button>
       </CardHeader>

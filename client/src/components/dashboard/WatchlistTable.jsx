@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, Trash2, ShipWheel } from 'lucide-react';
 import { useStock } from '@/context/StockContext';
 import axios from "axios"
-
+import { RefreshCw } from 'lucide-react';
 
 const WatchlistTable = () => {
 
@@ -136,11 +136,18 @@ const WatchlistTable = () => {
               <TableCell>{stock.name}</TableCell>
               <TableCell className="text-right">{renderPriceChange(stock)}</TableCell>
               <TableCell className="text-right">
-                  {stock.nextPrice === undefined 
-                  ? "---" 
-                  : typeof stock.nextPrice === "number" 
-                    ? renderPredictionPrice(stock.price, stock.nextPrice) 
-                                : stock.nextPrice}
+                {stock.nextPrice === undefined ? (
+                    "---"
+                  ) : stock.nextPrice === "Predicting..." ? (
+                    <div className="text-right">
+                      <RefreshCw className="animate-spin h-4 w-4 inline-block" />
+                    </div>
+                  ) : typeof stock.nextPrice === "number" ? (
+                    renderPredictionPrice(stock.price, stock.nextPrice)
+                  ) : (
+                    stock.nextPrice
+                  )}
+
               </TableCell>
               <TableCell>
                 <div className="flex space-x-1">
