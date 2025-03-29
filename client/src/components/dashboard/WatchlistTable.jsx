@@ -45,9 +45,7 @@ const WatchlistTable = () => {
      // console.log(selectedWatchlist)
       const startDate = new Date();
       startDate.setFullYear(startDate.getFullYear() - 10);
-      //console.log(stock.symbol);
-      //console.log(startDate.toISOString().split('T')[0])
-      //console.log(new Date().toISOString().split('T')[0])
+      
        setSelectedWatchlist((prevWatchlist) => ({
           ...prevWatchlist,
           stocks: prevWatchlist.stocks.map((s) =>

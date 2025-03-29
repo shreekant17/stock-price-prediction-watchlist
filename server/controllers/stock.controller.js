@@ -156,3 +156,16 @@ export const stock_data = async (req, res) => {
     }
 };
 
+
+export const getHistoricalData = async (req, res) => {
+    try {
+        const nse = new NseIndia()
+        const { symbol, range } = req.body;
+        const response = await nse.getEquityHistoricalData(symbol, range);
+        res.status(200).json({ message: "Historical data received", response });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: "Error Occured", e });
+    }
+}
+

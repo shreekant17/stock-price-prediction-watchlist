@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { storeStocks, search, insert_predicted_price, stock_data } from "../controllers/stock.controller.js"
+import { storeStocks, search, insert_predicted_price, stock_data, getHistoricalData } from "../controllers/stock.controller.js"
 
 const router = Router();
 
@@ -9,6 +9,7 @@ const router = Router();
 router.get('/store', storeStocks);
 
 router.post('/search', search);
+router.post('/getHistoricalData', getHistoricalData);
 router.get('/stock_data', stock_data);
 
 
