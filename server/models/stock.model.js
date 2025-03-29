@@ -12,6 +12,7 @@ const StockSchema = new mongoose.Schema(
         peRatio: { type: String },
         high52Week: { type: Number },
         low52Week: { type: Number },
+        marketCap: { type: Number },
     },
     { strict: false } // Allows storing additional fields dynamically
 );
