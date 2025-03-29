@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { BarChart3, Home, LogOut, User } from 'lucide-react';
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
 
   return (
@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
           <BarChart3 className="h-6 w-6 text-stocksense-primary" />
           <span className="text-xl font-bold">StockSense</span>
         </Link>
-        
+
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
                   Dashboard
                 </Link>
               </Button>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
