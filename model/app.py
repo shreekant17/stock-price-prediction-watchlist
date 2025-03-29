@@ -28,7 +28,7 @@ origins = [
 
 
 # MongoDB connection
-client = MongoClient("mongodb://localhost:27017/")  # Change this if hosted elsewhere
+client = MongoClient("mongodb+srv://shree:Shreekant0902@yopal.z6oba.mongodb.net/stock_db?retryWrites=true&w=majority&appName=yopal")  # Change this if hosted elsewhere
 db = client["stock_prediction"]
 models_collection = db["models"]
 
