@@ -75,7 +75,9 @@ const StockDetails: React.FC = () => {
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm font-medium text-muted-foreground">P/E Ratio</p>
               </div>
-              <p className="font-medium">{selectedStock.peRatio?.toFixed(2)}</p>
+              <p className="font-medium">
+                {typeof selectedStock.peRatio === "number" ? selectedStock.peRatio.toFixed(2) : "N/A"}
+              </p>
             </div>
 
             <div className="space-y-1">
