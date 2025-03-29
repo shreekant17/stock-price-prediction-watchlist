@@ -15,4 +15,5 @@ router.post('/getwatchlists', getwatchlists);
 router.post('/delete_from_watchlist', delete_from_watchlist);
 router.post('/delete_watchlist', delete_watchlist);
 
+
 export default router;

@@ -93,7 +93,7 @@ const WatchlistTable = () => {
 
     return (
       <div className={`flex flex-col ${color}`}>
-        <span>₹{stock.lastPrice.toFixed(2)}</span>
+        <span>₹{stock.price.toFixed(2)}</span>
         <span className="text-xs">
           {sign}{stock.pChange.toFixed(2)}% ({sign}₹{stock.change.toFixed(2)})
         </span>
@@ -135,13 +135,13 @@ const WatchlistTable = () => {
           {selectedWatchlist.stocks.map((stock) => (
             <TableRow key={stock.symbol}>
               <TableCell className="font-medium">{stock.symbol}</TableCell>
-              <TableCell>{stock.companyName}</TableCell>
+              <TableCell>{stock.name}</TableCell>
               <TableCell className="text-right">{renderPriceChange(stock)}</TableCell>
               <TableCell className="text-right">
                   {stock.nextPrice === undefined 
                   ? "---" 
                   : typeof stock.nextPrice === "number" 
-                    ? renderPredictionPrice(stock.lastPrice, stock.nextPrice) 
+                    ? renderPredictionPrice(stock.price, stock.nextPrice) 
                                 : stock.nextPrice}
               </TableCell>
               <TableCell>

@@ -67,7 +67,7 @@ const StockSearch = () => {
               >
                 <div className="flex flex-col">
                   <span className="font-medium">{stock.symbol}</span>
-                  <span className="text-sm text-gray-500">{stock.meta?.companyName}</span>
+                  <span className="text-sm text-gray-500">{stock.name}</span>
                 </div>
                 <Button
                   variant="ghost"

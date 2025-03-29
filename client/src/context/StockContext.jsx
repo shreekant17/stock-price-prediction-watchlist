@@ -116,7 +116,7 @@ const StockContext = createContext(undefined);
 export const StockProvider = ({ children }) => {
 
   const server = `https://stock-prediction-two-roan.vercel.app/api`
-  const [watchlists, setWatchlists] = useState(MOCK_WATCHLISTS);
+  const [watchlists, setWatchlists] = useState(null);
   const [selectedWatchlist, setSelectedWatchlist] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

@@ -58,12 +58,16 @@ const WatchlistSelector = () => {
   };
 
   const populateWatchlist = async (watchlistId) => {
-    try {
-      const response = await axios.post(`${server}/watchlist/getlist`, { watchlistId: watchlistId });
-      const watchlist = response.data;
-      setSelectedWatchlist(watchlist);
-    } catch (e) {
-      //console.log(e);
+    if (watchlistId) {
+      
+      try {
+        
+        const response = await axios.post(`${server}/watchlist/getlist`, { watchlistId: watchlistId });
+        const watchlist = response.data;
+        setSelectedWatchlist(watchlist);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 
