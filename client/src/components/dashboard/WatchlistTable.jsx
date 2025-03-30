@@ -107,6 +107,20 @@ const WatchlistTable = () => {
   };
 
 
+  const renderAccuracy = (accuracy) => {
+    const isPositive = accuracy >= 75;
+    const color = isPositive ? 'text-stocksense-positive' : 'text-stocksense-negative';
+  
+
+    return (
+      <div className={`flex flex-col ${color}`}>
+        <span>{accuracy.toFixed(2)}%</span>
+        
+      </div>
+    );
+  };
+
+
   const renderPredictionPrice = (prev, next) => {
     const isPositive = next > prev;
     const color = isPositive ? 'text-stocksense-positive' : 'text-stocksense-negative';
@@ -133,6 +147,7 @@ const WatchlistTable = () => {
             <TableHead>Name</TableHead>
             <TableHead className="text-right">Price / Change</TableHead>
             <TableHead className="text-right">Next Predicted Price</TableHead>
+            <TableHead className="text-right">Accuracy</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -142,6 +157,7 @@ const WatchlistTable = () => {
               <TableCell className="font-medium">{stock.symbol}</TableCell>
               <TableCell>{stock.name}</TableCell>
               <TableCell className="text-right">{renderPriceChange(stock)}</TableCell>
+              
               <TableCell className="text-right">
                 {stock.nextPrice === undefined ? (
                     "---"
@@ -156,6 +172,21 @@ const WatchlistTable = () => {
                   )}
 
               </TableCell>
+
+              <TableCell className="text-right">
+                {stock.accuracy === undefined ? (
+                    "---"
+                  ) : stock.nextPrice === "Predicting..." ? (
+                    <div className="text-right">
+                      <LoaderCircle className="animate-spin h-4 w-4 inline-block" />
+                    </div>
+                  ) : typeof stock.accuracy === "number" ? (
+                      renderAccuracy(stock.accuracy)
+                  ) : (
+                    stock.accuracy
+                  )}
+              </TableCell>
+
               <TableCell>
                 <div className="flex space-x-1">
                   <Button
