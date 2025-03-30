@@ -81,7 +81,7 @@ const WatchlistTable = () => {
         setSelectedWatchlist((prevWatchlist) => ({
           ...prevWatchlist,
           stocks: prevWatchlist.stocks.map((s) =>
-            s.stockId === stock.stockId ? { ...s, nextPrice: nextPrice } : s
+            s.stockId === stock.stockId ? { ...s, nextPrice: nextPrice, accuracy: accuracy } : s
           ),
         }));
       }
