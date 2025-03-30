@@ -91,6 +91,7 @@ def load_model_from_mongo(stock_symbol, end_date):
     retrieved_doc = models_collection.find_one({"stock_symbol": stock_symbol, "end_date": end_date})
     if retrieved_doc:
         model = model_from_json(retrieved_doc["model"])
+        accuracy = retrieved_doc["accuracy"]
 
         # Convert weights from JSON list back to numpy arrays
         weights = [np.array(w) for w in retrieved_doc["weights"]]
@@ -98,7 +99,7 @@ def load_model_from_mongo(stock_symbol, end_date):
         # Set model weights
         model.set_weights(weights)
 
-        return model
+        return {"model": model, "accuracy": accuracy}
     return None
 
 
@@ -140,13 +141,19 @@ def predict(model, stock_symbol, start_date, end_date, future_days=30):
 def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=30):
     future_predictions = []
     # Try loading the model from MongoDB
-    model = load_model_from_mongo(stock_symbol, end_date)
-    model_source = "Trained new model"
+    
+    stored_model = load_model_from_mongo(stock_symbol, end_date)
 
-    if model:
+    model_source = "Trained new model"
+    acc = 0.0
+
+    if stored_model:
         model_source = "Loaded from MongoDB"
+        model = stored_model["model"]
+        accuracy = stored_model["accuracy"]
+
         predict(model, stock_symbol, start_date, end_date, future_days)
-       
+
        
         future_predictions = predict(model, stock_symbol, start_date, end_date, future_days)
 
@@ -223,6 +230,8 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
 
         print("R2 score:", r2)
 
+        acc = r2*100
+
         save_model_to_mongo(model, stock_symbol, end_date, r2)
         print(f"Saved model for {stock_symbol} ({end_date}) to MongoDB")
 
@@ -233,7 +242,8 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
         "model_source": model_source,
         "next_trading_day": future_predictions[1]["date"],
         "predicted_price_today": round(future_predictions[1]["price"], 2),
-        "future_predictions": future_predictions
+        "future_predictions": future_predictions,
+        "accuracy": acc
     }
 
 

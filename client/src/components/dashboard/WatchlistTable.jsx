@@ -68,11 +68,12 @@ const WatchlistTable = () => {
      // console.log(response.data);
 
       const nextPrice = response.data.predicted_price_today
-      
+      const accuracy = response.data.accuracy
         const response2 = await axios.post(`${server}/stock/insert_predicted_price`, {
         stockId: stock.stockId,
         nextPrice: nextPrice,
-        watchlistId: selectedWatchlist._id
+          watchlistId: selectedWatchlist._id,
+          accuracy: accuracy
       });
 
       if (response.status === 200) {
