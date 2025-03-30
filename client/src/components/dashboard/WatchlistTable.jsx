@@ -174,12 +174,12 @@ const WatchlistTable = () => {
               </TableCell>
 
               <TableCell className="text-right">
-                {stock.accuracy === undefined ? (
-                    "---"
-                  ) : stock.nextPrice === "Predicting..." ? (
-                    <div className="text-right">
+                {stock.nextPrice === "Predicting..." ? (
+                  <div className="text-right">
                       <LoaderCircle className="animate-spin h-4 w-4 inline-block" />
                     </div>
+                ) : stock.accuracy === undefined ? (
+                      "---"
                   ) : typeof stock.accuracy === "number" ? (
                       renderAccuracy(stock.accuracy)
                   ) : (
