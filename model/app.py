@@ -145,7 +145,7 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
     stored_model = load_model_from_mongo(stock_symbol, end_date)
 
     model_source = "Trained new model"
-    acc = 0.0
+    accuracy = 0.0
 
     if stored_model:
         model_source = "Loaded from MongoDB"
@@ -230,7 +230,7 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
 
         print("R2 score:", r2)
 
-        acc = r2*100
+        accuracy = r2*100
 
         save_model_to_mongo(model, stock_symbol, end_date, r2)
         print(f"Saved model for {stock_symbol} ({end_date}) to MongoDB")
@@ -243,7 +243,7 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
         "next_trading_day": future_predictions[1]["date"],
         "predicted_price_today": round(future_predictions[1]["price"], 2),
         "future_predictions": future_predictions,
-        "accuracy": acc
+        "accuracy": accuracy
     }
 
 
