@@ -3,11 +3,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BarChart3, TrendingUp, Search, ShieldCheck } from 'lucide-react';
+import Navbar from '../components/layout/Navbar';
 
 const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
+      
       <section className="bg-gradient-to-b from-blue-50 to-white py-20">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-8 text-center">

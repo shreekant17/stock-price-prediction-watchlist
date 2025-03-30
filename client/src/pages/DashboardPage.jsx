@@ -10,7 +10,7 @@ import StockDetails from '@/components/dashboard/StockDetails';
 const DashboardPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      
       <div className="container px-4 py-8 flex-grow">
         <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
 

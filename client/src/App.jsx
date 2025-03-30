@@ -13,6 +13,7 @@ import DashboardPage from "./pages/DashboardPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
+import Navbar from "./components/layout/Navbar";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <StockProvider>
+            <Navbar/>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
