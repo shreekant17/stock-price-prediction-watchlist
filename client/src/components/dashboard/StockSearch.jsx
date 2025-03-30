@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, LoaderCircle } from "lucide-react";
 import { useStock } from "@/context/StockContext";
 
 const StockSearch = () => {
@@ -8,13 +8,14 @@ const StockSearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setShowDropdown(false);
       return;
     }
-
+    
     const debounce = setTimeout(() => {
       searchStocks(searchQuery);
       setShowDropdown(true);
@@ -23,17 +24,22 @@ const StockSearch = () => {
     return () => clearTimeout(debounce);
   }, [searchQuery]);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(event.target) &&
+        inputRef.current && !inputRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleAddToWatchlist = (stock) => {
     if (selectedWatchlist) {
       addToWatchlist(selectedWatchlist._id, stock);
-    }
-  };
-
-  const clearSearch = () => {
-    setSearchQuery("");
-    setShowDropdown(false);
-    if (inputRef.current) {
-      inputRef.current.focus();
     }
   };
 
@@ -52,9 +58,12 @@ const StockSearch = () => {
 
       {/* Dropdown List */}
       {showDropdown && (
-        <div className="absolute left-0 w-full shadow-md border rounded mt-1 bg-white z-50">
+        <div ref={dropdownRef} className="absolute left-0 w-full max-h-[50svh] overflow-y-scroll shadow-md border rounded mt-1 bg-white z-50">
           {isLoading ? (
-            <div className="p-2 text-gray-500">Loading...</div>
+            <div className="p-2 text-gray-500 flex justify-start items-center">
+              <LoaderCircle className="animate-spin h-4 w-4 inline-block" />
+              <span className="ml-2">Searching...</span>
+            </div>
           ) : searchResults.length > 0 ? (
             searchResults.map((stock, index) => (
               <span
@@ -73,10 +82,8 @@ const StockSearch = () => {
                   variant="ghost"
                   size="icon"
                   disabled={!selectedWatchlist}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddToWatchlist(stock);
-                  }}
+                  onMouseDown={(e) => e.stopPropagation()} // Prevent dropdown from closing
+                  onClick={() => handleAddToWatchlist(stock)}
                   title={selectedWatchlist ? `Add to ${selectedWatchlist.name}` : "Select a watchlist first"}
                 >
                   <PlusCircle className="h-4 w-4" />

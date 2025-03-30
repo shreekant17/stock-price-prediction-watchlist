@@ -9,10 +9,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Eye, Trash2, ShipWheel } from 'lucide-react';
+import { Eye, Trash2, ShipWheel, LoaderCircle, ChartBarIncreasing, ChartCandlestick } from 'lucide-react';
 import { useStock } from '@/context/StockContext';
 import axios from "axios"
-import { RefreshCw } from 'lucide-react';
+
 
 const WatchlistTable = () => {
 
@@ -38,6 +38,12 @@ const WatchlistTable = () => {
       </div>
     );
   }
+
+  const handleClick = async function (stock) {
+    this.disabled = true; // Disable the button
+    await predictNextPrice(stock); // Call the function normally
+    this.disabled = false; // Re-enable after execution
+  };
 
   const predictNextPrice = async (stock) => {
     setPredictedPrice("Loading...");
@@ -140,7 +146,7 @@ const WatchlistTable = () => {
                     "---"
                   ) : stock.nextPrice === "Predicting..." ? (
                     <div className="text-right">
-                      <RefreshCw className="animate-spin h-4 w-4 inline-block" />
+                      <LoaderCircle className="animate-spin h-4 w-4 inline-block" />
                     </div>
                   ) : typeof stock.nextPrice === "number" ? (
                     renderPredictionPrice(stock.price, stock.nextPrice)
@@ -154,13 +160,15 @@ const WatchlistTable = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => predictNextPrice(stock)}
+                    title="Predict New Price"
+                    onClick={(e) => handleClick.call(e.currentTarget, stock)}
                   >
-                    <ShipWheel className="h-4 w-4" />
+                    <ChartCandlestick className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
+                    title="View Stock"
                     onClick={() => setSelectedStock(stock)}
                   >
                     <Eye className="h-4 w-4" />
@@ -168,6 +176,7 @@ const WatchlistTable = () => {
                   <Button
                     variant="ghost"
                     size="icon"
+                    title = "Remove"
                     onClick={() => removeFromWatchlist(selectedWatchlist._id, stock)}
                   >
                     <Trash2 className="h-4 w-4" />
