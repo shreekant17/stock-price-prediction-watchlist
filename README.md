@@ -68,7 +68,7 @@ Set up `.env` files for backend, frontend, and ML API.
 #### 4. Access the Application
 - **Frontend**: `http://localhost:5173`
 - **Backend**: `http://localhost:5000`
-- **ML API**: `http://localhost:8000`
+- **ML API**: `https://shreekantkalwar-stock-prediction-model.hf.space`
 
 
 ## Future Enhancements

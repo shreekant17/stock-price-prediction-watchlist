@@ -66,6 +66,7 @@ export const search = async (req, res) => {
             high52Week: 1,
             low52Week: 1,
             marketCap: 1,
+            accuracy: 1,
             _id: 1
         });
 
@@ -79,7 +80,7 @@ export const search = async (req, res) => {
 
 export const insert_predicted_price = async (req, res) => {
     try {
-        const { stockId, watchlistId, nextPrice } = req.body;
+        const { stockId, watchlistId, nextPrice, accuracy } = req.body;
 
         // Validate input
         if (!stockId || !nextPrice) {
@@ -89,7 +90,7 @@ export const insert_predicted_price = async (req, res) => {
         // Update stock with the predicted price
         const updatedStock = await Stock.findByIdAndUpdate(
             stockId,
-            { $set: { nextPrice } },
+            { $set: { nextPrice, accuracy } },
             { new: true } // Return updated document
         );
 
@@ -130,7 +131,9 @@ export const stock_data = async (req, res) => {
                         peRatio: x.metadata.pdSymbolPe,
                         high52Week: x.priceInfo.weekHighLow.max,
                         low52Week: x.priceInfo.weekHighLow.min,
-                        marketCap: x.priceInfo.lastPrice * x.securityInfo.issuedSize
+                        marketCap: x.priceInfo.lastPrice * x.securityInfo.issuedSize,
+                        nextPrice: undefined,
+                        accuracy: undefined
                     };
                 } catch (error) {
                     console.error(`Error fetching details for ${symbol}:`, error);
