@@ -2,7 +2,7 @@
 import React from 'react';
 import { useStock } from '@/context/StockContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowDown, ArrowUp, CircleDollarSign, BarChart3, TrendingUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, CircleDollarSign, IndianRupeeIcon, BarChart3, TrendingUp } from 'lucide-react';
 
 const StockDetails = () => {
   const { selectedStock } = useStock();
@@ -27,7 +27,7 @@ const StockDetails = () => {
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'INR',
       maximumFractionDigits: 2,
     }).format(value);
   };
@@ -64,7 +64,7 @@ const StockDetails = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
-                <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                <IndianRupeeIcon className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm font-medium text-muted-foreground">Market Cap</p>
               </div>
               <p className="font-medium">{formatWithSuffix(selectedStock.marketCap * 1e9)}</p>
