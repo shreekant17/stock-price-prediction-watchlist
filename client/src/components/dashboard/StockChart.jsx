@@ -16,21 +16,10 @@ import { RefreshCw } from 'lucide-react';
 import { useStock } from '@/context/StockContext';
 import axios from 'axios';
 
-const fastserver = `https://shreekantkalwar-stock-prediction-model.hf.space`;
+
 const server = `https://stock-prediction-two-roan.vercel.app/api`;
 
-const fetchPredictionData = async (symbol) => {
-  const startDate = new Date();
-  startDate.setFullYear(startDate.getFullYear() - 10);
-  
-  const response = await axios.post(`${fastserver}/train`, {
-    stock_symbol: symbol,
-    start_date: startDate.toISOString().split('T')[0],
-    end_date: new Date().toISOString().split('T')[0],
-    future_days: 30
-  });
-  return response.data;
-};
+
 
 const StockChart = () => {
   const { selectedStock } = useStock();
@@ -40,23 +29,21 @@ const StockChart = () => {
    const fetchData = async () => {
       setLoading(true);
       try {
-        const startDate = new Date();
-        startDate.setFullYear(startDate.getFullYear() - 1);
-        
-        const start = startDate.toISOString().split('T')[0];
-        const end = new Date().toISOString().split('T')[0];
+       
 
         // Fetch and sort historical data
         const historicalResponse = await axios.post(`${server}/stock/getHistoricalData`, {
-          symbol: selectedStock.symbol.split(".")[0],
-          range: { start, end }
+          symbol: selectedStock.symbol.split(".")[0]
         });
+
         const historicalData = historicalResponse.data.data
           .sort((a, b) => new Date(a.date) - new Date(b.date));
 
         // Fetch prediction data
-        const predictionResponse = await fetchPredictionData(selectedStock.symbol);
-        const predictionData = predictionResponse.future_predictions;
+    
+        const predictionData = selectedStock.future_predictions;
+
+        //console.log(selectedStock)
 
         // Get last historical point
         const lastHistoricalPoint = historicalData[historicalData.length - 1];
@@ -64,13 +51,17 @@ const StockChart = () => {
         const lastHistoricalValue = lastHistoricalPoint.price;
 
         // Process predictions with connection point
-        const predicted = predictionData
-          .map(d => ({
-            date: d.date,
-            value: d.price,
-            type: 'predicted'
-          }))
-          .filter(d => new Date(d.date) > new Date(lastHistoricalDate));
+        let predicted = []
+        if (predictionData) {
+          
+          predicted = predictionData
+           .map(d => ({
+             date: d.date,
+             value: d.price,
+             type: 'predicted'
+           }))
+            .filter(d => new Date(d.date) > new Date(lastHistoricalDate));
+        }
 
         // Add connection bridge
         if (predicted.length > 0) {
@@ -146,7 +137,7 @@ const StockChart = () => {
             />
             <YAxis />
             <Tooltip
-              labelFormatter={(label) => new Date(label).toLocaleDateString()}
+              labelFormatter={(label) => new Date(label).toLocaleDateString("en-IN")}
               formatter={(value) => [`₹${value.toFixed(2)}`, 'Price']}
             />
             <Legend />

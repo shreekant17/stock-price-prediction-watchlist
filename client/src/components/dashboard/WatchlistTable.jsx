@@ -16,7 +16,7 @@ import axios from "axios"
 
 const WatchlistTable = () => {
 
-  const fastserver = `https://shreekantkalwar-stock-prediction-model.hf.space`
+
   const server = `https://stock-prediction-two-roan.vercel.app/api`
   const { selectedWatchlist, removeFromWatchlist, selectStock, setSelectedStock, setSelectedWatchlist } = useStock();
 
@@ -40,56 +40,49 @@ const WatchlistTable = () => {
   }
 
   const handleClick = async function (stock) {
-    this.disabled = true; // Disable the button
-    await predictNextPrice(stock); // Call the function normally
-    this.disabled = false; // Re-enable after execution
+    
+     setSelectedWatchlist((prevWatchlist) => ({
+        ...prevWatchlist,
+        stocks: prevWatchlist.stocks.map((s) =>
+          s.stockId === stock.stockId ? { ...s, prediction_in_progress: true } : s
+        ),
+      }));
+
+      await getPredictions(stock);
+
+    
+    
   };
 
-  const predictNextPrice = async (stock) => {
-    setPredictedPrice("Loading...");
+  const getPredictions = async (stock) => {
+
     try {
-     // console.log(selectedWatchlist)
-      const startDate = new Date();
-      startDate.setFullYear(startDate.getFullYear() - 10);
+
+      const response = await axios.post(`${server}/stock/getPredictions`, { symbol: stock.symbol });
+
       
-       setSelectedWatchlist((prevWatchlist) => ({
-          ...prevWatchlist,
-          stocks: prevWatchlist.stocks.map((s) =>
-            s.stockId === stock.stockId ? { ...s, nextPrice: "Predicting..." } : s
-          ),
-        }));
 
-      const response = await axios.post(`${fastserver}/train`, {
-          stock_symbol: stock.symbol,
-          start_date: startDate.toISOString().split('T')[0], 
-           end_date: new Date().toISOString().split('T')[0],
-          future_days: 30
-      });
-     // console.log(response.data);
+        const newStock = response.data.stock
+        //const accuracy = response.data.accuracy
 
-      const nextPrice = response.data.predicted_price_today
-      const accuracy = response.data.accuracy
-        const response2 = await axios.post(`${server}/stock/insert_predicted_price`, {
-        stockId: stock.stockId,
-        nextPrice: nextPrice,
-          watchlistId: selectedWatchlist._id,
-          accuracy: accuracy
-      });
-
-      if (response.status === 200) {
-        // Update the state by mapping over selectedWatchlist.stocks
         setSelectedWatchlist((prevWatchlist) => ({
           ...prevWatchlist,
           stocks: prevWatchlist.stocks.map((s) =>
-            s.stockId === stock.stockId ? { ...s, nextPrice: nextPrice, accuracy: accuracy } : s
+            s.stockId === stock.stockId ? { ...newStock } : s
           ),
         }));
-      }
 
+
+     
+       
+
+       
     } catch (err) {
       console.log(err);
     }
   }
+
+  
 
   const renderPriceChange = (stock) => {
     const isPositive = stock.pChange >= 0;
@@ -159,12 +152,13 @@ const WatchlistTable = () => {
               <TableCell className="text-right">{renderPriceChange(stock)}</TableCell>
               
               <TableCell className="text-right">
-                {stock.nextPrice === undefined ? (
-                    "---"
-                  ) : stock.nextPrice === "Predicting..." ? (
-                    <div className="text-right">
+                {
+                   stock.prediction_in_progress ? (
+                     <div className="text-right">
                       <LoaderCircle className="animate-spin h-4 w-4 inline-block" />
                     </div>
+                  ) : stock.nextPrice === undefined ? (
+                     "---"
                   ) : typeof stock.nextPrice === "number" ? (
                     renderPredictionPrice(stock.price, stock.nextPrice)
                   ) : (
@@ -174,12 +168,13 @@ const WatchlistTable = () => {
               </TableCell>
 
               <TableCell className="text-right">
-                {stock.nextPrice === "Predicting..." ? (
+                {
+                  stock.prediction_in_progress ? (
                   <div className="text-right">
                       <LoaderCircle className="animate-spin h-4 w-4 inline-block" />
                     </div>
-                ) : stock.accuracy === undefined ? (
-                      "---"
+                  ) :  stock.accuracy === undefined? (
+                  "---"
                   ) : typeof stock.accuracy === "number" ? (
                       renderAccuracy(stock.accuracy)
                   ) : (
@@ -193,6 +188,7 @@ const WatchlistTable = () => {
                     variant="ghost"
                     size="icon"
                     title="Predict New Price"
+                    disabled = {stock.prediction_in_progress}
                     onClick={(e) => handleClick.call(e.currentTarget, stock)}
                   >
                     <ChartCandlestick className="h-4 w-4" />
@@ -208,7 +204,8 @@ const WatchlistTable = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    title = "Remove"
+                    title="Remove"
+                    
                     onClick={() => removeFromWatchlist(selectedWatchlist._id, stock)}
                   >
                     <Trash2 className="h-4 w-4" />

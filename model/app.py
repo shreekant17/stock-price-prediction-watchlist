@@ -40,6 +40,7 @@ uri = os.getenv("MONGODB_URI")
 client = MongoClient(uri)  # Change this if hosted elsewhere
 db = client["stock_db"]
 models_collection = db["models"]
+stock_collection = db["stocks"]
 app = FastAPI()
 
 # Add CORS middleware
@@ -85,6 +86,19 @@ def save_model_to_mongo(model, stock_symbol, end_date, r2):
         {"$set": document},  # Update or insert the entire document
         upsert=True  # Insert if not exists
     )
+
+def save_prediction_data(stock_symbol, future_predictions, accuracy):
+    stocks_collection.update_one(
+        {"symbol": stock_symbol},  # Find by stock symbol 
+        {"$set": {
+            "accuracy": accuracy,
+            "future_predictions": future_predictions,
+            "nextPrice": round(future_predictions[1]["price"], 2)
+        }},  # Update or insert the entire document
+        upsert=True  # Insert if not exists
+    )
+
+
 
 # Load model from MongoDB
 def load_model_from_mongo(stock_symbol, end_date):
@@ -156,6 +170,7 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
 
        
         future_predictions = predict(model, stock_symbol, start_date, end_date, future_days)
+        
 
         print(f"Loaded existing model for {stock_symbol} ({end_date}) from MongoDB")
     else:
@@ -237,6 +252,8 @@ def train_and_predict_and_save(stock_symbol, start_date, end_date, future_days=3
 
        
         future_predictions = predict(model, stock_symbol, start_date, end_date, future_days)
+
+        save_prediction_data(stock_symbol, future_predictions, accuracy)
 
     return {
         "model_source": model_source,

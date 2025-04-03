@@ -13,6 +13,8 @@ const StockSchema = new mongoose.Schema(
         high52Week: { type: Number },
         low52Week: { type: Number },
         marketCap: { type: Number },
+        future_predictions: { type: Object },
+        prediction_in_progress: { type: Boolean, default: false }
     },
     { strict: false } // Allows storing additional fields dynamically
 );

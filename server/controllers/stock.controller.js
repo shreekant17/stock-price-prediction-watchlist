@@ -3,6 +3,8 @@ import { NseIndia } from "stock-nse-india";
 import axios from "axios"
 import { Stock } from "../models/stock.model.js"
 
+import { Model } from "../models/model.model.js"
+
 const getNSEStocks = async () => {
     try {
         const response = await axios.get(
@@ -113,60 +115,62 @@ export const insert_predicted_price = async (req, res) => {
 export const stock_data = async (req, res) => {
     try {
         const nse = new NseIndia();
-        const symbols = await nse.getAllStockSymbols(); // Get all stock symbols from NSE
+        const symbols = await nse.getAllStockSymbols();
 
-        // Fetch all stock details in parallel
+        // Process stocks in batches to avoid timeout
+        const batchSize = 50; // Adjust batch size based on performance
+        const stockDetails = [];
 
-        const stockDetails = await Promise.all(
-            symbols.map(async (symbol) => {
-                try {
-                    const x = await nse.getEquityDetails(symbol);
-                    console.log(x.info.symbol + " Done");
-                    return {
-                        name: x.info.companyName,
-                        symbol: x.info.symbol + ".NS",
-                        price: x.priceInfo.lastPrice,
-                        change: x.priceInfo.change,
-                        pChange: x.priceInfo.pChange,
-                        peRatio: x.metadata.pdSymbolPe,
-                        high52Week: x.priceInfo.weekHighLow.max,
-                        low52Week: x.priceInfo.weekHighLow.min,
-                        marketCap: x.priceInfo.lastPrice * x.securityInfo.issuedSize,
-                        nextPrice: undefined,
-                        accuracy: undefined
-                    };
-                } catch (error) {
-                    console.error(`Error fetching details for ${symbol}:`, error);
-                    return null; // Skip failed fetches
-                }
-            })
-        );
+        for (let i = 0; i < symbols.length; i += batchSize) {
+            const batch = symbols.slice(i, i + batchSize);
+            console.log(`Processing batch ${i / batchSize + 1} of ${Math.ceil(symbols.length / batchSize)}`);
 
+            const batchResults = await Promise.all(
+                batch.map(async (symbol) => {
+                    try {
+                        const x = await nse.getEquityDetails(symbol);
+                        console.log(x.info.symbol + " Done");
+                        return {
+                            name: x.info.companyName,
+                            symbol: x.info.symbol + ".NS",
+                            price: x.priceInfo.lastPrice,
+                            change: x.priceInfo.change,
+                            pChange: x.priceInfo.pChange,
+                            peRatio: x.metadata.pdSymbolPe,
+                            high52Week: x.priceInfo.weekHighLow.max,
+                            low52Week: x.priceInfo.weekHighLow.min,
+                            marketCap: x.priceInfo.lastPrice * x.securityInfo.issuedSize,
+                            nextPrice: undefined,
+                            accuracy: undefined
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching details for ${symbol}:`, error);
+                        return null; // Skip failed fetches
+                    }
+                })
+            );
 
+            stockDetails.push(...batchResults.filter(stock => stock !== null));
+        }
 
-        // Filter out any failed fetches (null values)
-        const stocks = stockDetails.filter(stock => stock !== null);
-
-        if (stocks.length === 0) {
+        if (stockDetails.length === 0) {
             return res.status(400).json({ message: "No valid stock data fetched" });
         }
 
-        // Prepare bulk operations for upsert (insert/update)
-        const bulkOps = stocks.map(stock => ({
+        // Perform bulk insert/update
+        const bulkOps = stockDetails.map(stock => ({
             updateOne: {
-                filter: { symbol: stock.symbol }, // Match by stock symbol
-                update: { $set: stock }, // Update the stock data
-                upsert: true // Insert if it doesn't exist
+                filter: { symbol: stock.symbol },
+                update: { $set: stock },
+                upsert: true
             }
         }));
 
-        // Perform bulk insert/update
         await Stock.bulkWrite(bulkOps);
-
-        res.status(200).json({ message: "Fetched and updated NSE stocks", stocks });
+        res.status(200).json({ message: "Fetched and updated NSE stocks", stocks: stockDetails });
     } catch (err) {
-        console.error("Error fetching all NSE symbols:", err);
-        res.status(500).json({ message: "Error fetching all NSE symbols", error: err.message });
+        console.error("Error fetching NSE stocks:", err);
+        res.status(500).json({ message: "Error fetching NSE stocks", error: err.message });
     }
 };
 
@@ -175,7 +179,17 @@ export const stock_data = async (req, res) => {
 export const getHistoricalData = async (req, res) => {
     try {
         const nse = new NseIndia();
-        const { symbol, range } = req.body;
+        const { symbol } = req.body;
+
+        const startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        const start_date = getISTDateString(startDate);
+        const end_date = getISTDateString(new Date());
+
+        const range = {
+            start: start_date,
+            end: end_date
+        }
 
         // Fetch historical data from NSE API
         const response = await nse.getEquityHistoricalData(symbol, range);
@@ -194,5 +208,60 @@ export const getHistoricalData = async (req, res) => {
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: "Error Occurred", error: e.message });
+    }
+};
+
+
+function getISTDateString(date) {
+    const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Intl.DateTimeFormat('en-CA', options).format(date); // 'en-CA' gives YYYY-MM-DD format
+}
+
+export const getPredictions = async (req, res) => {
+    try {
+        const { symbol } = req.body;
+
+        if (!symbol) {
+            return res.status(400).json({ error: 'Stock symbol is required' });
+        }
+
+        const startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 10);
+        const start_date = getISTDateString(startDate);
+        const end_date = getISTDateString(new Date());
+
+        // Check if the model data already exists
+        const model = await Model.findOne({ stock_symbol: symbol, end_date });
+
+        if (model) {
+            // Wait for the response before sending back
+            const stock = await Stock.findOne({ symbol: symbol })
+            return res.status(200).json({ message: "Predictions Received", stock, modelExists: true });
+
+        } else {
+            // Send response immediately
+            const updatedStock = await Stock.findOneAndUpdate(
+                { symbol: symbol },
+                { $set: { prediction_in_progress: true } },
+                { new: true } // Return updated document
+            );
+
+
+            res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false });
+
+
+
+            // Fire-and-forget API call (No await, runs in the background)
+            axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
+                stock_symbol: symbol,
+                start_date,
+                end_date,  // Fixed incorrect usage
+                future_days: 30
+            }).catch(err => console.error("Error in background API call:", err.message));
+        }
+
+    } catch (err) {
+        console.error('Unexpected error:', err.message);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };
