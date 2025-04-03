@@ -247,7 +247,6 @@ export const getPredictions = async (req, res) => {
             );
 
 
-            res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false });
 
 
 
@@ -258,6 +257,8 @@ export const getPredictions = async (req, res) => {
                 end_date,  // Fixed incorrect usage
                 future_days: 30
             }).catch(err => console.error("Error in background API call:", err.message));
+
+            res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false });
         }
 
     } catch (err) {
