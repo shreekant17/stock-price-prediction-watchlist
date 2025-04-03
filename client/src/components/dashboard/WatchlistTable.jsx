@@ -60,7 +60,7 @@ const WatchlistTable = () => {
 
       const response = await axios.post(`${server}/stock/getPredictions`, { symbol: stock.symbol });
 
-      
+        console.log(response)
 
         const newStock = response.data.stock
         //const accuracy = response.data.accuracy
@@ -72,11 +72,6 @@ const WatchlistTable = () => {
           ),
         }));
 
-
-     
-       
-
-       
     } catch (err) {
       console.log(err);
     }
