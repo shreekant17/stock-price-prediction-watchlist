@@ -1,7 +1,7 @@
 # Stock Watchlist & Prediction System
 
 ## Overview
-This project is a full-stack application that allows users to create watchlists for **NSE Nifty 500** stocks and receive **LSTM-based stock price predictions**. Users can search for stocks, add them to their watchlists, and view predictions powered by a machine learning model.
+This project is a full-stack application that allows users to create watchlists for **NSE** stocks and receive **LSTM-based stock price predictions**. Users can search for stocks, add them to their watchlists, and view predictions powered by a machine learning model.
 
 ## Features
 - **User Profiles**: Secure authentication for personalized watchlists.
@@ -36,28 +36,28 @@ Ensure you have the following installed:
 ### Steps to Run the Project
 #### 1. Clone the Repository
 ```sh
-git clone https://github.com/stock-price-prediction-watchlist.git
+git clone https://github.com/shreekant17/stock-price-prediction-watchlist.git
 cd your-project-directory
 ```
 
 #### 2. Install Dependencies
 ##### Frontend
 ```sh
-cd frontend
+cd client
 npm install
 npm run dev
 ```
 
 ##### Backend
 ```sh
-cd backend
+cd server
 npm install
 npm start
 ```
 
 ##### ML Model (FastAPI)
 ```sh
-cd ml-api
+cd model
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
@@ -81,6 +81,6 @@ MIT License
 
 ---
 ### Contributors
-- Your Name - [GitHub Profile](https://github.com/shreekant17)
+- Shreekant Kalwar - [GitHub Profile](https://github.com/shreekant17)
 
 Feel free to contribute! 🚀
