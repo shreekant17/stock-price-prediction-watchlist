@@ -225,7 +225,7 @@ export const getPredictions = async (req, res) => {
             return res.status(400).json({ error: 'Stock symbol is required' });
         }
 
-        console.log(symbol);
+
 
         const startDate = new Date();
         startDate.setFullYear(startDate.getFullYear() - 10);
@@ -235,7 +235,7 @@ export const getPredictions = async (req, res) => {
         // Check if the model data already exists
         const model = await Model.findOne({ stock_symbol: symbol, end_date });
 
-        console.log(model)
+
 
         if (model) {
             // Wait for the response before sending back
