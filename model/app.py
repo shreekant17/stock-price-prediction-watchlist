@@ -40,7 +40,7 @@ uri = os.getenv("MONGODB_URI")
 client = MongoClient(uri)  # Change this if hosted elsewhere
 db = client["stock_db"]
 models_collection = db["models"]
-stock_collection = db["stocks"]
+stocks_collection = db["stocks"]
 app = FastAPI()
 
 # Add CORS middleware
@@ -93,7 +93,8 @@ def save_prediction_data(stock_symbol, future_predictions, accuracy):
         {"$set": {
             "accuracy": accuracy,
             "future_predictions": future_predictions,
-            "nextPrice": round(future_predictions[1]["price"], 2)
+            "nextPrice": round(future_predictions[1]["price"], 2),
+            "prediction_in_progress": False
         }},  # Update or insert the entire document
         upsert=True  # Insert if not exists
     )
