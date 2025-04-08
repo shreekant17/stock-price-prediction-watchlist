@@ -256,7 +256,7 @@ export const getPredictions = async (req, res) => {
             );
 
             // Fire-and-forget API call (No await, runs in the background)
-            await axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
+            axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
                 stock_symbol: symbol,
                 start_date,
                 end_date,  // Fixed incorrect usage
