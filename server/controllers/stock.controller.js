@@ -246,7 +246,7 @@ export const getPredictions = async (req, res) => {
         } else {
             const pending_prediction = await Stock.findOne({ prediction_in_progress: true });
             if (pending_prediction) {
-                res.status(202).json({ message: 'Another prediction in progress.', another_prediction_in_progress: true });
+                return res.status(202).json({ message: 'Another prediction in progress.', another_prediction_in_progress: true });
             }
             // Send response immediately
             const updatedStock = await Stock.findOneAndUpdate(
