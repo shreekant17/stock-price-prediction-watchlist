@@ -256,12 +256,12 @@ export const getPredictions = async (req, res) => {
             );
 
             // Fire-and-forget API call (No await, runs in the background)
-            axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
+            await axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
                 stock_symbol: symbol,
                 start_date,
-                end_date,  // Fixed incorrect usage
+                end_date,
                 future_days: 30
-            }).catch(err => console.error("Error in background API call:", err.message));
+            });
 
             res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false, another_prediction_in_progress: false });
         }
