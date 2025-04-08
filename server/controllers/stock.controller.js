@@ -141,7 +141,8 @@ export const stock_data = async (req, res) => {
                             low52Week: x.priceInfo.weekHighLow.min,
                             marketCap: x.priceInfo.lastPrice * x.securityInfo.issuedSize,
                             nextPrice: undefined,
-                            accuracy: undefined
+                            accuracy: undefined,
+                            prediction_in_progress: false
                         };
                     } catch (error) {
                         console.error(`Error fetching details for ${symbol}:`, error);
