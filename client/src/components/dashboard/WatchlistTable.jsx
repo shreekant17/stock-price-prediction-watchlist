@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, Trash2, ShipWheel, LoaderCircle, ChartBarIncreasing, ChartCandlestick } from 'lucide-react';
 import { useStock } from '@/context/StockContext';
 import axios from "axios"
+import { toast } from 'sonner';
 
 
 const WatchlistTable = () => {
@@ -41,15 +42,19 @@ const WatchlistTable = () => {
 
   const handleClick = async function (stock) {
     
-     setSelectedWatchlist((prevWatchlist) => ({
-        ...prevWatchlist,
-        stocks: prevWatchlist.stocks.map((s) =>
-          s.stockId === stock.stockId ? { ...s, prediction_in_progress: true } : s
-        ),
-      }));
+    
+    const requestSent = await getPredictions(stock);
 
-      await getPredictions(stock);
-
+    if (requestSent) {
+      
+      setSelectedWatchlist((prevWatchlist) => ({
+         ...prevWatchlist,
+         stocks: prevWatchlist.stocks.map((s) =>
+           s.stockId === stock.stockId ? { ...s, prediction_in_progress: true } : s
+         ),
+       }));
+    }
+    
     
     
   };
@@ -64,6 +69,7 @@ const WatchlistTable = () => {
 
       if (response.data.another_prediction_in_progress) {
         toast.error(`Another prediction in progress`);
+        return false;
       } else {
         
         const newStock = response.data.stock
@@ -76,6 +82,7 @@ const WatchlistTable = () => {
             s.stockId === stock.stockId ? { ...newStock } : s
           ),
         }));
+        return true;
       }
 
 
