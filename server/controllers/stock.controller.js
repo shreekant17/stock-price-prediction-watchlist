@@ -243,6 +243,10 @@ export const getPredictions = async (req, res) => {
             return res.status(200).json({ message: "Predictions Received", stock, modelExists: true });
 
         } else {
+            const pending_prediction = await Stock.findOne({ prediction_in_progress: true });
+            if (pending_prediction) {
+                res.status(202).json({ message: 'Another prediction in progress.', another_prediction_in_progress: true });
+            }
             // Send response immediately
             const updatedStock = await Stock.findOneAndUpdate(
                 { symbol: symbol },
@@ -258,7 +262,7 @@ export const getPredictions = async (req, res) => {
                 future_days: 30
             }).catch(err => console.error("Error in background API call:", err.message));
 
-            res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false });
+            res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false, another_prediction_in_progress: false });
         }
 
     } catch (err) {

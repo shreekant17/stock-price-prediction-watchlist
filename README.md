@@ -6,7 +6,7 @@ This project is a full-stack application that allows users to create watchlists 
 ## Features
 - **User Profiles**: Secure authentication for personalized watchlists.
 - **Watchlist Management**: Add and remove stocks easily by searching.
-- **Stock Search**: Search for any **NSE Nifty 500** stock by name or symbol.
+- **Stock Search**: Search for any **NSE** stock by name or symbol.
 - **LSTM-Based Predictions**: Get AI-driven stock price predictions using an LSTM model.
 
 ## Tech Stack

@@ -60,17 +60,24 @@ const WatchlistTable = () => {
 
       const response = await axios.post(`${server}/stock/getPredictions`, { symbol: stock.symbol });
 
-        console.log(response)
+      console.log(response);
 
+      if (response.data.another_prediction_in_progress) {
+        toast.error(`Another prediction in progress`);
+      } else {
+        
         const newStock = response.data.stock
-        //const accuracy = response.data.accuracy
-
+      //const accuracy = response.data.accuracy
+      
+  
         setSelectedWatchlist((prevWatchlist) => ({
           ...prevWatchlist,
           stocks: prevWatchlist.stocks.map((s) =>
             s.stockId === stock.stockId ? { ...newStock } : s
           ),
         }));
+      }
+
 
     } catch (err) {
       console.log(err);
