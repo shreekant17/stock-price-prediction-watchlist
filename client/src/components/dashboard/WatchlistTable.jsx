@@ -43,14 +43,22 @@ const WatchlistTable = () => {
   const handleClick = async function (stock) {
     
     
+    setSelectedWatchlist((prevWatchlist) => ({
+         ...prevWatchlist,
+         stocks: prevWatchlist.stocks.map((s) =>
+           s.stockId === stock.stockId ? { ...s, prediction_in_progress: true } : s
+         ),
+    }));
+    
     const requestSent = await getPredictions(stock);
 
-    if (requestSent) {
+
+    if (!requestSent) {
       
       setSelectedWatchlist((prevWatchlist) => ({
          ...prevWatchlist,
          stocks: prevWatchlist.stocks.map((s) =>
-           s.stockId === stock.stockId ? { ...s, prediction_in_progress: true } : s
+           s.stockId === stock.stockId ? { ...s, prediction_in_progress: false } : s
          ),
        }));
     }
