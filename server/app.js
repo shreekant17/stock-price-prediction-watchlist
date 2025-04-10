@@ -8,7 +8,7 @@ import watchlistRoutes from './routes/watchlist.routes.js';
 const app = express();
 
 // Explicitly allow frontend origin
-const allowedOrigins = ['https://stock-price-prediction-two.vercel.app'];
+const allowedOrigins = ['https://stock-price-prediction-two.vercel.app', 'http://localhost:8080'];
 
 app.use(cors({
     origin: function (origin, callback) {
