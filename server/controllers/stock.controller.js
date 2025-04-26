@@ -110,9 +110,73 @@ export const insert_predicted_price = async (req, res) => {
 };
 
 
-
+export const stock_symbols = async (req, res) => {
+    try {
+        const nse = new NseIndia();
+        const symbols = await nse.getAllStockSymbols();
+        res.status(200).json({ message: "Fetched NSE stock symbols", symbols });
+    } catch (err) {
+        res.status(500).json({ message: "Erro Fetching NSE stock symbols", err });
+    }
+}
 
 export const stock_data = async (req, res) => {
+    try {
+        const batch = req.body.symbols;
+
+        const stockDetails = [];
+        const nse = new NseIndia();
+        const batchResults = await Promise.all(
+            batch.map(async (symbol) => {
+                try {
+                    const x = await nse.getEquityDetails(symbol);
+                    console.log(x.info.symbol + " Done");
+                    return {
+                        name: x.info.companyName,
+                        symbol: x.info.symbol + ".NS",
+                        price: x.priceInfo.lastPrice,
+                        change: x.priceInfo.change,
+                        pChange: x.priceInfo.pChange,
+                        peRatio: x.metadata.pdSymbolPe,
+                        high52Week: x.priceInfo.weekHighLow.max,
+                        low52Week: x.priceInfo.weekHighLow.min,
+                        marketCap: x.priceInfo.lastPrice * x.securityInfo.issuedSize,
+                        nextPrice: null,
+                        accuracy: null,
+                        prediction_in_progress: false
+                    };
+                } catch (error) {
+                    console.error(`Error fetching details for ${symbol}:`, error);
+                    return null; // Skip failed fetches
+                }
+            })
+        );
+
+        stockDetails.push(...batchResults.filter(stock => stock !== null));
+
+        if (stockDetails.length === 0) {
+            return res.status(400).json({ message: "No valid stock data fetched" });
+        }
+
+        const bulkOps = stockDetails.map(stock => ({
+            updateOne: {
+                filter: { symbol: stock.symbol },
+                update: { $set: stock },
+                upsert: true
+            }
+        }));
+
+        await Stock.bulkWrite(bulkOps);
+        res.status(200).json({ message: "Fetched and updated NSE stocks", stocks: stockDetails });
+
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error Fetching NSE stocks", err });
+    }
+}
+
+export const stock_dat = async (req, res) => {
     try {
         const nse = new NseIndia();
         const symbols = await nse.getAllStockSymbols();
@@ -140,8 +204,8 @@ export const stock_data = async (req, res) => {
                             high52Week: x.priceInfo.weekHighLow.max,
                             low52Week: x.priceInfo.weekHighLow.min,
                             marketCap: x.priceInfo.lastPrice * x.securityInfo.issuedSize,
-                            nextPrice: undefined,
-                            accuracy: undefined,
+                            nextPrice: null,
+                            accuracy: null,
                             prediction_in_progress: false
                         };
                     } catch (error) {
