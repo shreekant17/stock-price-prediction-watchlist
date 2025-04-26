@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from '@nextui-org/react';
+
 import  axios  from 'axios';
 import { ul } from 'framer-motion/client';
 export const AdminPage = () => {
@@ -41,7 +41,7 @@ export const AdminPage = () => {
       
       <div className="container px-4 py-8 flex-grow">
                 <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-                <Button onPress={handleUpdateStocksData} >Say Hello</Button>
+                <button onPress={handleUpdateStocksData} >Say Hello</button>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <p>Completed</p>
