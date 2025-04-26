@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 const WatchlistTable = () => {
 
 
-  const server = `https://stock-prediction-two-roan.vercel.app/api`
+  const server = import.meta.env.VITE_API_URL
   const { selectedWatchlist, removeFromWatchlist, selectStock, setSelectedStock, setSelectedWatchlist } = useStock();
 
   const [predictedPrice, setPredictedPrice] = useState("----")
@@ -50,10 +50,10 @@ const WatchlistTable = () => {
          ),
     }));
     
-    const requestSent = await getPredictions(stock);
+    const sendRequest = await getPredictions(stock);
 
 
-    if (!requestSent) {
+    if (!sendRequest) {
       
       setSelectedWatchlist((prevWatchlist) => ({
          ...prevWatchlist,
@@ -61,6 +61,8 @@ const WatchlistTable = () => {
            s.stockId === stock.stockId ? { ...s, prediction_in_progress: false } : s
          ),
        }));
+    } else {
+          
     }
     
     
@@ -71,7 +73,7 @@ const WatchlistTable = () => {
 
     try {
 
-      const response = await axios.post(`${server}/stock/getPredictions`, { symbol: stock.symbol });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/stock/getPredictions`, { symbol: stock.symbol });
 
       console.log(response);
 
@@ -81,7 +83,7 @@ const WatchlistTable = () => {
       } else {
         
         const newStock = response.data.stock
-      //const accuracy = response.data.accuracy
+     
       
   
         setSelectedWatchlist((prevWatchlist) => ({
@@ -90,6 +92,14 @@ const WatchlistTable = () => {
             s.stockId === stock.stockId ? { ...newStock } : s
           ),
         }));
+
+         axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
+          stock_symbol: stock.symbol,
+          start_date: response.data.date_range.start_date,
+          end_date: response.data.date_range.end_date,
+          future_days: 30
+         });
+        toast.success(`Request Sent`);
         return true;
       }
 

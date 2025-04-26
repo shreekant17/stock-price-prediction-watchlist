@@ -290,8 +290,6 @@ export const getPredictions = async (req, res) => {
             return res.status(400).json({ error: 'Stock symbol is required' });
         }
 
-
-
         const startDate = new Date();
         startDate.setFullYear(startDate.getFullYear() - 10);
         const start_date = getISTDateString(startDate);
@@ -319,15 +317,22 @@ export const getPredictions = async (req, res) => {
                 { new: true } // Return updated document
             );
 
-            // Fire-and-forget API call (No await, runs in the background)
-            await axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
-                stock_symbol: symbol,
-                start_date,
-                end_date,
-                future_days: 30
-            });
+            // // Fire-and-forget API call (No await, runs in the background)
+            // await axios.post(`https://shreekantkalwar-stock-prediction-model.hf.space/train`, {
+            //     stock_symbol: symbol,
+            //     start_date,
+            //     end_date,
+            //     future_days: 30
+            // });
 
-            res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false, another_prediction_in_progress: false });
+            const date_range = {
+
+                start_date,
+                end_date
+
+            }
+
+            res.status(202).json({ message: 'Prediction request sent to the model.', stock: updatedStock, modelExists: false, another_prediction_in_progress: false, date_range });
         }
 
     } catch (err) {
