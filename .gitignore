@@ -25,4 +25,4 @@ dist-ssr
 *.sw?
 
 server/*.env
-*.env
+client/*.env*
