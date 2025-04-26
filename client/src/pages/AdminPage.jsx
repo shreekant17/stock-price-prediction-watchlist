@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import  axios  from 'axios';
-import { ul } from 'framer-motion/client';
+
 export const AdminPage = () => {
     const [currBatch, setCurrBatch] = useState([]);
     const [allStocks, setAllStocks] = useState([]);
